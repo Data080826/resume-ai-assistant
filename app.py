@@ -49,28 +49,25 @@ if uploaded_file and openai_api_key:
                 st.markdown(msg["content"])
 
         # User input
-        if user_input := st.chat_input("Ask about your resume..."):
-            st.session_state.messages.append({"role": "user", "content": user_input})
+       if user_input := st.chat_input("Ask about your resume..."):
+    st.session_state.messages.append({"role": "user", "content": user_input})
 
-            # Retrieve relevant docs
-           docs = retriever.invoke(user_input)
-            context = "\n\n".join([doc.page_content for doc in docs])
+    with st.chat_message("assistant"):
+        docs = retriever.invoke(user_input)
 
-            # Build prompt manually
-            full_prompt = f"""
-            Answer the question based only on the resume context below.
+        context = "\n\n".join([doc.page_content for doc in docs])
 
-            Context:
-            {context}
+        response = llm.invoke(f"""
+        Answer based on this resume:
 
-            Question:
-            {user_input}
-            """
+        {context}
 
-            with st.chat_message("assistant"):
-                response = llm.invoke(full_prompt).content
-                st.markdown(response)
+        Question: {user_input}
+        """).content
 
+        st.markdown(response)
+
+    st.session_state.messages.append({"role": "assistant", "content": response})
             st.session_state.messages.append({"role": "assistant", "content": response})
 
     except Exception as e:
