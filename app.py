@@ -39,27 +39,27 @@ if uploaded_file and openai_api_key:
 
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-       # Chat memory
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+        # Chat memory
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
-# Display previous messages
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+        # Display previous messages
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
-# User input
-user_input = st.chat_input("Ask about your resume...")
+        # User input
+        user_input = st.chat_input("Ask about your resume...")
 
-if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
+        if user_input:
+            st.session_state.messages.append({"role": "user", "content": user_input})
 
-    with st.chat_message("assistant"):
-        docs = retriever.invoke(user_input)
+            with st.chat_message("assistant"):
+                docs = retriever.invoke(user_input)
 
-        context = "\n\n".join([doc.page_content for doc in docs])
+                context = "\n\n".join([doc.page_content for doc in docs])
 
-        response = llm.invoke(f"""
+                response = llm.invoke(f"""
 Answer based on this resume:
 
 {context}
@@ -67,9 +67,9 @@ Answer based on this resume:
 Question: {user_input}
 """).content
 
-        st.markdown(response)
+                st.markdown(response)
 
-    st.session_state.messages.append({"role": "assistant", "content": response})
+            st.session_state.messages.append({"role": "assistant", "content": response})
 
     except Exception as e:
         st.error(f"Error: {e}")
