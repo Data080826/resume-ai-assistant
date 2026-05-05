@@ -53,7 +53,7 @@ if uploaded_file and openai_api_key:
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             # Retrieve relevant docs
-            docs = retriever.get_relevant_documents(user_input)
+           docs = retriever.invoke(user_input)
             context = "\n\n".join([doc.page_content for doc in docs])
 
             # Build prompt manually
